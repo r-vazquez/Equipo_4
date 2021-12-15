@@ -1,22 +1,32 @@
 module MIPS_Processor
 (
 	input 			MAX10_CLK1_50,
-	input 	[9:9] SW,
+	input 	[9:0] SW,
 	
-	output	[7:0]	LEDR
+	output	[9:0]	LEDR
 );
 
+	wire clk_gen;
 	wire clk;
+	
+	Clock_Gen	Clock_Gen_inst	(
+											.inclk0	(MAX10_CLK1_50),
+											.c0 		(clk_gen)
+										);
 
 	cont_1s_RCO	clock	(
-								.mclk 	(MAX10_CLK1_50),
-								.reset	(SW),
+								.mclk 	(clk_gen),
+								.reset	(SW[9]),
 								.RCO		(clk)
 							);
 
 	MIPS_Multi_Cycle	MIPS	(
 										.clk			(clk),
-										.reset		(SW),
-										.GPIO_Out	(LEDR)
+										.reset		(SW[9]),
+										.GPIO_In		(SW[7:0]),
+										.GPIO_Out	(LEDR[7:0])
 									);
+	
+	assign LEDR[9] = clk;
+	
 endmodule

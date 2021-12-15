@@ -12,7 +12,7 @@ module Program_Memory
 	reg 	[DATA_WIDTH-1:0] 	rom[MEMORY_DEPTH-1:0];
 
 	initial begin
-		$readmemh("C:/PROJECTS/Equipo_4/assembly_code/test.txt", rom);
+		$readmemh("C:/PROJECTS/Equipo_4/assembly_code/T7-1.txt", rom);
 	end
 
 	always @ (Address) begin

@@ -6,20 +6,23 @@ module Control_Unit
 	//CONTROL SIGNALS
 	input		[5:0]	Op,
 	input 	[5:0] Funct,
+	input				Zero,
 	
-	output  			PC_Write,
+	output  			PC_En,
 	output			I_or_D,
 	output 			Mem_Write,
 	output 			IR_Write,
 	output 			Reg_Dst,
-	output 			Mem_to_Reg,
+	output 	[1:0]	Mem_to_Reg,
 	output 			Reg_Write,
 	output 			ALU_Src_A,
 	output 	[1:0]	ALU_Src_B,
 	output 	[2:0]	ALU_Control,
-	output 			PC_Src
+	output 	[1:0]	PC_Src
 );
 	
+	wire			PC_Write;
+	wire			Branch;
 	wire	[1:0]	ALU_Op;
 	
 	Control_Signals	State_and_Signals	(
@@ -36,7 +39,8 @@ module Control_Unit
 														.ALU_Src_A	(ALU_Src_A),
 														.ALU_Src_B	(ALU_Src_B),
 														.ALU_Op		(ALU_Op),
-														.PC_Src		(PC_Src)
+														.PC_Src		(PC_Src),
+														.Branch		(Branch)
 													);
 	
 	ALU_Decoder	Operation	(
@@ -44,5 +48,7 @@ module Control_Unit
 										.Funct			(Funct),
 										.ALU_Control	(ALU_Control)
 									);
+	
+	assign PC_En = PC_Write | (Branch & Zero);
 	
 endmodule
