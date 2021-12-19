@@ -5,25 +5,27 @@ module Data_Path
 )
 (
 	//INPUTS
-	input clk,
-	input reset,
+	input 			clk,
+	input 			reset,
+	input 	[7:0]	GPIO_i,
 	
 	//OUTPUTS
 	output 	[7:0] GPIO_o,
 	
 	//CONTROL SIGNALS
-	input 			PC_Write,
+	input 			PC_En,
 	input 			I_or_D,
 	input 			Mem_Write,
 	input 			IR_Write,
 	input 			Reg_Dst,
-	input 			Mem_to_Reg,
+	input 	[1:0]	Mem_to_Reg,
 	input 			Reg_Write,
 	input 			ALU_Src_A,
 	input		[1:0]	ALU_Src_B,
 	input 	[2:0]	ALU_Control,
-	input 			PC_Src,
+	input 	[1:0]	PC_Src,
 	
+	output			Zero,
 	output	[5:0]	Op,
 	output 	[5:0] Funct
 );
@@ -41,11 +43,12 @@ module Data_Path
 	wire	[DATA_WIDTH-1:0]	A;
 	wire	[DATA_WIDTH-1:0]	B;
 	wire	[DATA_WIDTH-1:0]	Sign_Imm;
+	wire	[DATA_WIDTH-1:0]	Shifted_Imm;
 	wire	[DATA_WIDTH-1:0]	Src_A;
 	wire	[DATA_WIDTH-1:0]	Src_B;
 	wire	[DATA_WIDTH-1:0]	ALU_Result;
-	wire	[DATA_WIDTH-1:0]	ALU_Out;
-	
+	wire	[DATA_WIDTH-1:0]	ALU_Out;	
+	wire	[27:0]	PC_Jump;	
 
 	Register	#
 				(
@@ -55,7 +58,7 @@ module Data_Path
 				(
 					.clk		(clk),
 					.reset	(reset),
-					.enable	(PC_Write),
+					.enable	(PC_En),
 					.d(PC_Next),
 					//.d			((PC_Next < 32'h400000) ? 32'h400000 : PC_Next),
 					.q			(PC)
@@ -104,10 +107,12 @@ module Data_Path
 					.Mux_Out		(Write_Register)
 				);
 	
-	Mux2x1	ALUout_or_Data	(
+	Mux4x1	Write_Data_Mux	(
 										.Selector	(Mem_to_Reg),
 										.I_0			(ALU_Out),
 										.I_1			(Data),
+										.I_2			({24'b0,GPIO_i}),
+										.I_3			(0),
 										.Mux_Out		(Write_Data)
 									);
 									
@@ -144,7 +149,12 @@ module Data_Path
 									.Sign_Ext_Imm	(Sign_Imm)
 								);
 	
-	Mux2x1	PC_or_A	(
+	Shift_Left_2 Branch_Shift	(
+											.Ext_Imm			(Sign_Imm),
+											.Shifted_Imm	(Shifted_Imm)
+										);
+	
+	Mux2x1	A_Input	(
 								.Selector	(ALU_Src_A),
 								.I_0			(PC),
 								.I_1			(A),
@@ -156,7 +166,7 @@ module Data_Path
 								.I_0			(B),
 								.I_1			(4),
 								.I_2			(Sign_Imm),
-								.I_3			(0),
+								.I_3			(Shifted_Imm),
 								.Mux_Out		(Src_B)
 							);
 	
@@ -174,16 +184,29 @@ module Data_Path
 											.d			(ALU_Result),
 											.q			(ALU_Out)
 										);
+								
+	Shift_Left_2	#
+						(
+							.DATA_WIDTH	(28)
+						)
+						Jump_Shift	
+						(
+							.Ext_Imm			({2'b0,Instr[25:0]}),
+							.Shifted_Imm	(PC_Jump)
+						);
 
-	Mux2x1	Program_Count_Incr	(
+	Mux4x1	Program_Count_Source	(
 												.Selector	(PC_Src),
 												.I_0			(ALU_Result),
 												.I_1			(ALU_Out),
+												.I_2			({4'b0,PC_Jump}),
+												.I_3			(0),
 												.Mux_Out		(PC_Next)
 											);		
 	
 	assign Op = Instr[31:26];
 	assign Funct = Instr[5:0];
 	assign GPIO_o = ALU_Result[7:0];
+	assign Zero = !ALU_Result;
 								
 endmodule
