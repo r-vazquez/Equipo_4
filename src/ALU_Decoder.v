@@ -8,7 +8,10 @@ module ALU_Decoder
 
 	localparam	add 	= 8'b00_100000,
 					addi	= 8'b00_xxxxxx,
-					sub	= 8'b01_xxxxxx;
+					sub	= 8'b01_xxxxxx,
+					lui	= 8'b10_xxxxxx,
+					slti	= 8'b11_xxxxxx,
+					mult	= 8'b11_011000;
 	
 	
 	always@({ALU_Op,Funct}) begin
@@ -18,6 +21,13 @@ module ALU_Decoder
 			addi	:	ALU_Control = 3'b000;
 			
 			sub	:	ALU_Control = 3'b001;
+			
+			lui	:	ALU_Control = 3'b110;
+			
+			mult	:	ALU_Control = 3'b010;
+			
+			slti 	: 	ALU_Control = 3'b111;
+
 		endcase
 	end
 endmodule

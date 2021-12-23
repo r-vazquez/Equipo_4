@@ -17,9 +17,9 @@ module Data_Memory
 	reg 	[DATA_WIDTH-1:0] 	Address_reg;
 
 	always @ (posedge clk) begin
-		if (Write_Enable)
+		if (Write_Enable) begin
 			ram[Address] <= Write_Data;
-
+		end
 		Address_reg <= Address;
 	end
 

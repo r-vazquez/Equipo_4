@@ -13,7 +13,7 @@ module MIPS_Multi_Cycle
 	wire 			I_or_D_w;
 	wire 			Mem_Write_w;
 	wire 			IR_Write_w;
-	wire 			Reg_Dst_w;
+	wire 	[1:0]	Reg_Dst_w;
 	wire 	[1:0]	Mem_to_Reg_w;
 	wire 			Reg_Write_w;
 	wire 			ALU_Src_A_w;

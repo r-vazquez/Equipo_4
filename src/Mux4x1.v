@@ -1,16 +1,16 @@
 module Mux4x1
 #
 (
-	parameter N = 32
+	parameter DATA_WIDTH = 32
 )
 (
-	input			[1:0]		Selector,
-	input			[N-1:0]	I_0,
-	input			[N-1:0]	I_1,
-	input			[N-1:0]	I_2,
-	input			[N-1:0]	I_3,
+	input			[1:0]					Selector,
+	input			[DATA_WIDTH-1:0]	I_0,
+	input			[DATA_WIDTH-1:0]	I_1,
+	input			[DATA_WIDTH-1:0]	I_2,
+	input			[DATA_WIDTH-1:0]	I_3,
 	
-	output reg 	[N-1:0]	Mux_Out
+	output reg 	[DATA_WIDTH-1:0]	Mux_Out
 );
 
 	always@(*) begin
