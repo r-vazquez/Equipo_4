@@ -22,7 +22,7 @@ end
 
 initial begin		
 	#0 	reset_tb = 0;
-		GPIO_i_tb = 8'b00000001;
+		GPIO_i_tb = 8'b00000011;
 	#1 	reset_tb = 1;
 end
 

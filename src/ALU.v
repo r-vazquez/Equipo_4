@@ -15,12 +15,15 @@ module ALU
 	always @ (*) begin
 		Result = 32'b0;
 		case (Control)
-			3'b000:	Result = A + B;
-			3'b001:	Result = A - B;
-			3'b010:	Result = A * B;
-			3'b011:	Result = A & B;
-			3'b100:	Result = A | B;
-			3'b101: 	Result = A ^ B;
+			3'b000	:	Result = A + B;
+			3'b001	:	Result = A - B;
+			3'b010	:	Result = A * B;
+			3'b011	:	Result = A & B;
+			3'b100	:	Result = A | B;
+			3'b101	: 	Result = A ^ B;
+			3'b110	: 	Result = B << 16;
+			3'b111	:	Result = (A < B) ? 32'd1 : 32'd0;
+			
 			default:		Result = 32'b0;
 		endcase
 	end

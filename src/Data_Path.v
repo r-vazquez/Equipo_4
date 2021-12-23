@@ -17,7 +17,7 @@ module Data_Path
 	input 			I_or_D,
 	input 			Mem_Write,
 	input 			IR_Write,
-	input 			Reg_Dst,
+	input 	[1:0]	Reg_Dst,
 	input 	[1:0]	Mem_to_Reg,
 	input 			Reg_Write,
 	input 			ALU_Src_A,
@@ -59,8 +59,7 @@ module Data_Path
 					.clk		(clk),
 					.reset	(reset),
 					.enable	(PC_En),
-					.d(PC_Next),
-					//.d			((PC_Next < 32'h400000) ? 32'h400000 : PC_Next),
+					.d			(PC_Next),
 					.q			(PC)
 				);
 	
@@ -95,7 +94,7 @@ module Data_Path
 										.q			(Data)
 									);
 									
-	Mux2x1	#
+	Mux4x1	#
 				(
 					.DATA_WIDTH	(5)
 				)
@@ -104,6 +103,8 @@ module Data_Path
 					.Selector	(Reg_Dst),
 					.I_0			(Instr[20:16]),
 					.I_1			(Instr[15:11]),
+					.I_2			(5'd31),
+					.I_3			(0),
 					.Mux_Out		(Write_Register)
 				);
 	
