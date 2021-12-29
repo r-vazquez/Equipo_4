@@ -128,7 +128,15 @@ module Data_Path
 										.Read_Data_1_o			(RD1),
 										.Read_Data_2_o			(RD2)
 									);
-									
+	
+	Register	GPIO_Out_Register	(
+											.clk		(clk),
+											.reset	(reset),
+											.enable	(((Write_Register == 5'd23) & !Src_A) ? 1'b1 : 1'b0),
+											.d			(Write_Data),
+											.q			(GPIO_o[7:0])
+										);	
+	
 	Register	A_Register	(
 									.clk		(clk),
 									.reset	(reset),
@@ -207,7 +215,7 @@ module Data_Path
 	
 	assign Op = Instr[31:26];
 	assign Funct = Instr[5:0];
-	assign GPIO_o = ALU_Result[7:0];
+	//assign GPIO_o = ALU_Result[7:0];
 	assign Zero = !ALU_Result;
 								
 endmodule

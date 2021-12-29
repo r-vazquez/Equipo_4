@@ -6,6 +6,7 @@ Main:
 	li $sp, 0x10010100 #stack top limit
 	ori $a0,$a0, 3 # Loading constant 
 	jal Factorial # Calling Factorial procedure
+	add $s7, $zero, $v0 #Saving result
 	j Exit	# Jump to Exit label
 	
 Factorial:
